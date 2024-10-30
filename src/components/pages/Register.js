@@ -1,48 +1,56 @@
+import '../styles/Register.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
-  const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [anioNacimiento, setAnioNacimiento] = useState('');
+  const [nombre, setNombre] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/users/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, password, anioNacimiento })
-    });
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, nombre })
+      });
 
-    const data = await response.json();
-
-    if (response.ok) { // Verifica si la respuesta es exitosa
-      alert("Registro exitoso. Redirigiendo a inicio de sesión...");
-      navigate('/login'); // Redirige a la página de login
-    } else {
-      alert("Error al registrar usuario: " + (data.message || "Error desconocido")); // Muestra el mensaje de error
+      if (response.ok) {
+        const data = await response.json();
+        alert("Registro exitoso");
+        navigate('/login'); // Redirigir a inicio de sesión
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Error en el registro");
+      }
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+      alert("Error al conectar con el servidor");
     }
   };
 
   return (
     <div className="register-container">
-      <h1>Registro de Usuario</h1>
-      <form onSubmit={handleSubmit}>
+      <h1>Registrarse</h1>
+      <form onSubmit={handleSubmit} className="register-form">
         <input
           type="text"
           placeholder="Nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
+          className="register-input"
         />
         <input
           type="email"
-          placeholder="Correo"
+          placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="register-input"
         />
         <input
           type="password"
@@ -50,15 +58,9 @@ function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="register-input"
         />
-        <input
-          type="text"
-          placeholder="Año de Nacimiento"
-          value={anioNacimiento}
-          onChange={(e) => setAnioNacimiento(e.target.value)}
-          required
-        />
-        <button type="submit">Registrar</button>
+        <button type="submit" className="register-button">Registrarse</button>
       </form>
     </div>
   );

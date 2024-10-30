@@ -1,69 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import '../styles/Dashboard.css';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Dashboard = () => {
+function Dashboard() {
+  const [user, setUser] = useState(null);
   const [codigo, setCodigo] = useState('');
-  const [mensaje, setMensaje] = useState('');
   const [historial, setHistorial] = useState([]);
+  const navigate = useNavigate();
 
-  // Cargar el historial de códigos cuando el componente se monte
   useEffect(() => {
-    const obtenerHistorial = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users/historial');
-        setHistorial(response.data.historial); // Asegúrate de que el backend envíe el historial en este formato
+        const response = await fetch('http://localhost:5000/api/users/historial', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+          setHistorial(data.codigosIngresados || []);
+        } else {
+          navigate('/login');
+        }
       } catch (error) {
-        console.error('Error al obtener el historial:', error);
+        console.error("Error al obtener los datos del usuario:", error);
       }
     };
 
-    obtenerHistorial();
-  }, []);
+    fetchUserData();
+  }, [navigate]);
 
-  // Función para manejar el envío de código
-  const handleSubmit = async (e) => {
+  const handleCodigoSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await axios.post('http://localhost:5000/api/users/ingresar-codigo', { codigo });
-      setMensaje(response.data.message || 'Código ingresado correctamente');
-      setCodigo(''); // Limpia el campo de código
-      // Actualiza el historial después de ingresar un código
-      setHistorial(prevHistorial => [...prevHistorial, response.data]);
+      const response = await fetch('http://localhost:5000/api/users/ingresar-codigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo })
+      });
+
+      if (response.ok) {
+        alert("Código ingresado exitosamente");
+        // Actualiza el historial después de ingresar un nuevo código
+        const updatedHistorial = await fetch('http://localhost:5000/api/users/historial');
+        const data = await updatedHistorial.json();
+        setHistorial(data);
+        setCodigo('');
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Error al ingresar el código");
+      }
     } catch (error) {
-      setMensaje(error.response?.data?.message || 'Error al ingresar el código');
+      console.error("Error al enviar el código:", error);
     }
   };
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-
-      {/* Formulario para ingresar código */}
-      <form onSubmit={handleSubmit}>
+    <div className="dashboard-container">
+      <h1>Bienvenido, {user ? user.email : 'Cargando...'}</h1>
+      <form onSubmit={handleCodigoSubmit} className="codigo-form">
         <input
           type="text"
+          placeholder="Ingresa tu código"
           value={codigo}
           onChange={(e) => setCodigo(e.target.value)}
-          placeholder="Ingresa el código"
           required
+          className="codigo-input"
         />
-        <button type="submit">Enviar Código</button>
+        <button type="submit" className="codigo-button">Enviar Código</button>
       </form>
-
-      {/* Mensaje de resultado del ingreso del código */}
-      {mensaje && <p>{mensaje}</p>}
-
-      {/* Mostrar historial de códigos ingresados */}
       <h2>Historial de Códigos Ingresados</h2>
-      <ul>
-        {historial.map((entry, index) => (
-          <li key={index}>
-            Código: {entry.codigo} - Premio: {entry.premio} - Fecha: {new Date(entry.fechaHora).toLocaleString()}
-          </li>
+      <ul className="historial-list">
+        {historial.map((cod, index) => (
+          <li key={index}>{cod}</li>
         ))}
       </ul>
     </div>
   );
-};
+}
 
 export default Dashboard;
