@@ -1,84 +1,132 @@
-import '../styles/Dashboard.css';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Para redirigir después de reclamar el código
+import '../styles/Dashboard.css'; // Importa el archivo CSS para estilos
 
-function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [codigo, setCodigo] = useState('');
-  const [historial, setHistorial] = useState([]);
-  const navigate = useNavigate();
+const Dashboard = ({ userId }) => {
+    const [codigo, setCodigo] = useState('');
+    const [mensaje, setMensaje] = useState('');
+    const [cargando, setCargando] = useState(false); // Estado para manejar el cargando
+    const [historial, setHistorial] = useState([]); // Estado para el historial
+    const navigate = useNavigate(); // Para la redirección
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/users/historial', {
-          method: 'GET',
-          credentials: 'include',
-        });
+    const handleReclamar = async (event) => {
+        event.preventDefault(); // Evitar que el formulario se recargue
 
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-          setHistorial(data.codigosIngresados || []);
-        } else {
-          navigate('/login');
+        if (!userId) {
+            setMensaje("❌ Debes estar autenticado para reclamar el código ❌");
+            return;
         }
-      } catch (error) {
-        console.error("Error al obtener los datos del usuario:", error);
-      }
+
+        const datos = { userId, codigo };
+        setCargando(true); // Mostrar indicador de carga
+
+        try {
+            const response = await fetch('http://localhost:4000/api/users/ingresar-codigo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || '❌ Error en el reclamo, intenta de nuevo ❌');
+            }
+
+            setMensaje(data.message);
+            setCodigo(''); // Limpiar el campo del código tras un reclamo exitoso
+            await obtenerHistorial(userId);
+            setTimeout(() => {
+                navigate('/');
+            }, 2000);
+
+        } catch (error) {
+            console.error("Error:", error);
+            setMensaje(error.message);
+        } finally {
+            setCargando(false); // Ocultar indicador de carga
+        }
     };
 
-    fetchUserData();
-  }, [navigate]);
+    const obtenerHistorial = async (userId) => {
+        try {
+            const response = await fetch('http://localhost:4000/api/users/historial', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-  const handleCodigoSubmit = async (e) => {
-    e.preventDefault();
+            const data = await response.json();
 
-    try {
-      const response = await fetch('http://localhost:5000/api/users/ingresar-codigo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ codigo })
-      });
+            if (!response.ok) {
+                throw new Error(data.message || '❌ Error al obtener el historial ❌');
+            }
 
-      if (response.ok) {
-        alert("Código ingresado exitosamente");
-        // Actualiza el historial después de ingresar un nuevo código
-        const updatedHistorial = await fetch('http://localhost:5000/api/users/historial');
-        const data = await updatedHistorial.json();
-        setHistorial(data);
-        setCodigo('');
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || "Error al ingresar el código");
-      }
-    } catch (error) {
-      console.error("Error al enviar el código:", error);
-    }
-  };
+            setHistorial(data.historial);
 
-  return (
-    <div className="dashboard-container">
-      <h1>Bienvenido, {user ? user.email : 'Cargando...'}</h1>
-      <form onSubmit={handleCodigoSubmit} className="codigo-form">
-        <input
-          type="text"
-          placeholder="Ingresa tu código"
-          value={codigo}
-          onChange={(e) => setCodigo(e.target.value)}
-          required
-          className="codigo-input"
-        />
-        <button type="submit" className="codigo-button">Enviar Código</button>
-      </form>
-      <h2>Historial de Códigos Ingresados</h2>
-      <ul className="historial-list">
-        {historial.map((cod, index) => (
-          <li key={index}>{cod}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+        } catch (error) {
+            console.error("Error al obtener el historial:", error);
+            setMensaje(error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (userId) {
+            obtenerHistorial(userId);
+        }
+    }, [userId]);
+
+    return (
+        <div className="reclamar-container">
+            <h2 className="reclamar-title">🎉 Reclama tu Código 🎉</h2>
+            <form onSubmit={handleReclamar}>
+                <div className="form-group">
+                    <label htmlFor="codigo">Código</label>
+                    <input
+                        type="text"
+                        id="codigo"
+                        value={codigo}
+                        onChange={(e) => setCodigo(e.target.value)}
+                        placeholder="Ingresa el código"
+                        required
+                    />
+                </div>
+                <button className="reclamar-button" type="submit" disabled={cargando}>
+                    {cargando ? 'Reclamando...' : 'Reclamar Código'}
+                </button>
+                {mensaje && (
+                    <p className={mensaje.includes('Éxito') ? 'mensaje-exito' : 'mensaje-error'}>
+                        {mensaje}
+                    </p>
+                )}
+            </form>
+            {cargando && <div className="loader">🔄 Cargando...</div>}
+
+            {/* Sección para mostrar el historial de reclamos */}
+            <div className="historial-container">
+                <h3>Historial de Reclamos</h3>
+                {historial.length === 0 ? (
+                    <p>No hay reclamos registrados.</p>
+                ) : (
+                    <ul>
+                        {historial.map((reclamo) => (
+                            <li key={reclamo.codigo}>
+                                Código: {reclamo.codigo}, Monto: ${reclamo.montoGanado}, Estado: {reclamo.estado}, Fecha: {new Date(reclamo.fechaReclamo).toLocaleString('es-CO')}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* Botón para regresar */}
+            <button className="reclamar-button" onClick={() => navigate(-1)}>
+                ⬅️ Regresar
+            </button>
+        </div>
+    );
+};
 
 export default Dashboard;
