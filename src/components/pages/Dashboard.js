@@ -1,83 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Para redirigir después de reclamar el código
-import '../styles/Dashboard.css'; // Importa el archivo CSS para estilos
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/Dashboard.css';
 
-const Dashboard = ({ userId }) => {
-    const [codigo, setCodigo] = useState('');
-    const [mensaje, setMensaje] = useState('');
-    const [cargando, setCargando] = useState(false); // Estado para manejar el cargando
-    const [historial, setHistorial] = useState([]); // Estado para el historial
-    const navigate = useNavigate(); // Para la redirección
+function Dashboard() {
+    const [codigo, setCodigo] = useState(''); // Estado para el código a reclamar
+    const [mensaje, setMensaje] = useState(''); // Estado para mensajes
+    const [cargando, setCargando] = useState(false); // Estado para mostrar cargando
+    const [historial, setHistorial] = useState([]); // Estado para el historial de reclamos
+    const navigate = useNavigate(); // Hook para navegación
 
-    const handleReclamar = async (event) => {
-        event.preventDefault(); // Evitar que el formulario se recargue
+    useEffect(() => {
+        // Cargar el historial de reclamos al iniciar el componente
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            fetch(`http://localhost:4000/api/users/${userId}/history`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        setHistorial(data.codes); // Asumimos que 'data.codes' contiene el historial
+                    } else {
+                        setMensaje(data.message);
+                    }
+                })
+                .catch((error) => setMensaje('Error al cargar el historial.'));
+        }
+    }, []);
+
+    const handleReclamar = async (e) => {
+        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        const userId = localStorage.getItem('userId'); // Recupera el userId del localStorage
 
         if (!userId) {
-            setMensaje("❌ Debes estar autenticado para reclamar el código ❌");
+            setMensaje('❌ Debes estar autenticado para reclamar el código ❌');
             return;
         }
 
-        const datos = { userId, codigo };
-        setCargando(true); // Mostrar indicador de carga
+        const redeemData = {
+            code: codigo,
+            userId,
+        };
+
+        setCargando(true); // Activa el estado de cargando
 
         try {
-            const response = await fetch('http://localhost:4000/api/users/ingresar-codigo', {
+            const response = await fetch('http://localhost:4000/api/codes/redeem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(datos),
+                body: JSON.stringify(redeemData),
             });
 
-            const data = await response.json();
+            const result = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || '❌ Error en el reclamo, intenta de nuevo ❌');
+            if (response.ok) {
+                setMensaje(result.message);
+                setCodigo(''); // Limpia el campo de código después de reclamar
+                setHistorial((prevHistorial) => [...prevHistorial, { codigo, montoGanado: result.montoGanado, estado: 'Reclamado', fechaReclamo: new Date() }]); // Actualiza el historial
+            } else {
+                setMensaje(result.message);
             }
-
-            setMensaje(data.message);
-            setCodigo(''); // Limpiar el campo del código tras un reclamo exitoso
-            await obtenerHistorial(userId);
-            setTimeout(() => {
-                navigate('/');
-            }, 2000);
-
         } catch (error) {
-            console.error("Error:", error);
-            setMensaje(error.message);
+            console.error('Error al reclamar el código:', error);
+            setMensaje('Error al reclamar el código. Intenta de nuevo más tarde.');
         } finally {
-            setCargando(false); // Ocultar indicador de carga
+            setCargando(false); // Desactiva el estado de cargando
         }
     };
-
-    const obtenerHistorial = async (userId) => {
-        try {
-            const response = await fetch('http://localhost:4000/api/users/historial', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || '❌ Error al obtener el historial ❌');
-            }
-
-            setHistorial(data.historial);
-
-        } catch (error) {
-            console.error("Error al obtener el historial:", error);
-            setMensaje(error.message);
-        }
-    };
-
-    useEffect(() => {
-        if (userId) {
-            obtenerHistorial(userId);
-        }
-    }, [userId]);
 
     return (
         <div className="reclamar-container">
@@ -112,8 +101,8 @@ const Dashboard = ({ userId }) => {
                     <p>No hay reclamos registrados.</p>
                 ) : (
                     <ul>
-                        {historial.map((reclamo) => (
-                            <li key={reclamo.codigo}>
+                        {historial.map((reclamo, index) => (
+                            <li key={index}>
                                 Código: {reclamo.codigo}, Monto: ${reclamo.montoGanado}, Estado: {reclamo.estado}, Fecha: {new Date(reclamo.fechaReclamo).toLocaleString('es-CO')}
                             </li>
                         ))}
@@ -127,6 +116,6 @@ const Dashboard = ({ userId }) => {
             </button>
         </div>
     );
-};
+}
 
 export default Dashboard;
