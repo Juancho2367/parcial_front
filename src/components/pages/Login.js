@@ -48,10 +48,12 @@ function Login({ callback }) {
 
     return (
         <div className="login-container">
-            <h2 className="login-title">¡Participa en el Sorteo de Margarita!</h2>
-            <p className="login-subtitle">Inicia sesión para una oportunidad de ganar</p>
+            <h2 className="login-title">Gana Con Detodito</h2>
+            <p className="login-subtitle">Ingresa para probar suerte</p>
+            
             {error && <div className="error-message">{error}</div>}
             {success && <div className="success-message">{success}</div>}
+            
             <div className="form-group">
                 <label htmlFor="username">
                     <span className="icon">👤</span> Usuario
@@ -67,7 +69,7 @@ function Login({ callback }) {
             </div>
             <div className="form-group">
                 <label htmlFor="password">
-                    <span className="icon">🔒</span> Contraseña
+                    <span className="icon"></span> Contraseña
                 </label>
                 <input
                     type="password"
@@ -78,8 +80,11 @@ function Login({ callback }) {
                     required
                 />
             </div>
-            <button className="login-button" onClick={handleLogin}>Entrar</button>
-            <Link to="/register" className="register-button">Registrarse</Link>
+            
+            <div className="button-container">
+                <button className="login-button" onClick={handleLogin}>Iniciar Sesión</button>
+                <Link to="/register" className="register-button">Registrarse</Link>
+            </div>
         </div>
     );
 }

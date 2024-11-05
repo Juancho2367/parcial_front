@@ -3,74 +3,76 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
 function Dashboard() {
-    const [codigo, setCodigo] = useState(''); // Estado para el código a reclamar
-    const [mensaje, setMensaje] = useState(''); // Estado para mensajes
-    const [cargando, setCargando] = useState(false); // Estado para mostrar cargando
-    const [historial, setHistorial] = useState([]); // Estado para el historial de reclamos
-    const navigate = useNavigate(); // Hook para navegación
+    const [codigo, setCodigo] = useState('');
+    const [mensaje, setMensaje] = useState('');
+    const [cargando, setCargando] = useState(false);
+    const [historial, setHistorial] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Cargar el historial de reclamos al iniciar el componente
         const userId = localStorage.getItem('userId');
         if (userId) {
             fetch(`http://localhost:4000/api/users/${userId}/history`)
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.success) {
-                        setHistorial(data.codes); // Asumimos que 'data.codes' contiene el historial
+                    if (data.status === "Éxito") {
+                        setHistorial(data.historial);
                     } else {
                         setMensaje(data.message);
                     }
                 })
-                .catch((error) => setMensaje('Error al cargar el historial.'));
+                .catch(() => setMensaje('Error al cargar el historial.'));
         }
     }, []);
 
     const handleReclamar = async (e) => {
-        e.preventDefault(); // Previene el comportamiento por defecto del formulario
-        const userId = localStorage.getItem('userId'); // Recupera el userId del localStorage
+        e.preventDefault();
+        const userId = localStorage.getItem('userId');
 
         if (!userId) {
             setMensaje('❌ Debes estar autenticado para reclamar el código ❌');
             return;
         }
 
-        const redeemData = {
-            code: codigo,
-            userId,
-        };
+        if (!codigo.trim()) { // Verificar si el código está vacío
+            setMensaje('❌ Inserte un código ❌');
+            return;
+        }
 
-        setCargando(true); // Activa el estado de cargando
+        setCargando(true);
 
         try {
-            const response = await fetch('http://localhost:4000/api/codes/redeem', {
+            const response = await fetch('http://localhost:4000/api/users/ingresar-codigo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(redeemData),
+                body: JSON.stringify({ codigo, userId }),
             });
 
             const result = await response.json();
 
             if (response.ok) {
                 setMensaje(result.message);
-                setCodigo(''); // Limpia el campo de código después de reclamar
-                setHistorial((prevHistorial) => [...prevHistorial, { codigo, montoGanado: result.montoGanado, estado: 'Reclamado', fechaReclamo: new Date() }]); // Actualiza el historial
+                setCodigo('');
+                setHistorial((prevHistorial) => [
+                    ...prevHistorial,
+                    { codigo, montoGanado: result.montoGanado, estado: 'Reclamado', fechaReclamo: new Date() }
+                ]);
             } else {
                 setMensaje(result.message);
             }
-        } catch (error) {
-            console.error('Error al reclamar el código:', error);
+        } catch {
             setMensaje('Error al reclamar el código. Intenta de nuevo más tarde.');
         } finally {
-            setCargando(false); // Desactiva el estado de cargando
+            setCargando(false);
         }
     };
 
     return (
-        <div className="reclamar-container">
-            <h2 className="reclamar-title">🎉 Reclama tu Código 🎉</h2>
+        <div className="dashboard-container">
+            <h2 className="dashboard-title">🎉 Reclama tu Código 🎉</h2>
+            <p className="dashboard-subtitle">Introduce tu código para reclamar recompensas.</p>
             <form onSubmit={handleReclamar}>
                 <div className="form-group">
                     <label htmlFor="codigo">Código</label>
@@ -92,9 +94,6 @@ function Dashboard() {
                     </p>
                 )}
             </form>
-            {cargando && <div className="loader">🔄 Cargando...</div>}
-
-            {/* Sección para mostrar el historial de reclamos */}
             <div className="historial-container">
                 <h3>Historial de Reclamos</h3>
                 {historial.length === 0 ? (
@@ -109,9 +108,7 @@ function Dashboard() {
                     </ul>
                 )}
             </div>
-
-            {/* Botón para regresar */}
-            <button className="reclamar-button" onClick={() => navigate(-1)}>
+            <button className="volver-button" onClick={() => navigate(-1)}>
                 ⬅️ Regresar
             </button>
         </div>

@@ -1,227 +1,123 @@
-/* Asegúrate de que el contenedor principal ocupe toda la altura */
+/* src/styles/Login.css */
+
 .login-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center; /* Asegura que el contenido esté centrado verticalmente */
-  padding: 30px;
+  align-items: flex-start; /* Alineación a la izquierda */
+  padding: 20px;
   max-width: 400px;
-  width: 100%;
-  height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  width: 90%;
+  background-color: hsl(90, 50%, 60%);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   color: #333;
-  margin: auto; /* Centra horizontalmente en caso de que haya espacio extra */
+  margin: auto;
+  margin-top: 50px;
 }
 
-/* Resto de estilos para el formulario, títulos, y botones */
 .login-title {
-  font-size: 26px;
-  color: #ff9900; /* Color vibrante */
+  font-size: 24px;
+  color: #ffffff;
   font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  text-align: left; /* Alineación del título a la izquierda */
+  width: 100%;
 }
 
 .login-subtitle {
   font-size: 16px;
-  color: #666;
+  color: #ffffff;
   margin-bottom: 20px;
+  text-align: left; /* Alineación del subtítulo a la izquierda */
+  width: 100%;
 }
 
-/* Estilos para los grupos de formulario */
 .form-group {
   width: 100%;
   margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .form-group label {
   font-size: 14px;
-  color: #444;
+  color: #ffffff;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
 }
 
-.form-group .icon {
-  margin-right: 8px;
-  color: #ff9900; /* Color vibrante */
+.icon {
+  margin-right: 5px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #ff9900;
-  border-radius: 8px;
+  padding: 10px;
+  border: 2px solid #666666;
+  background-color: #d9d9d9;
+  border-radius: 10px;
   outline: none;
-  transition: border-color 0.3s;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box;
 }
 
-.form-group input:focus {
-  border-color: #ff3300; /* Cambia el color al hacer foco */
+.button-container {
+  display: flex;
+  justify-content: flex-start; /* Alineación de botones a la izquierda */
+  gap: 10px;
+  width: 100%;
 }
 
-/* Botones */
 .login-button,
 .register-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
+  padding: 10px;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100px; /* Tamaño uniforme para ambos botones */
 }
 
 .login-button {
-  background-color: #ff3300;
+  background-color: #4CAF50;
   color: white;
 }
 
 .register-button {
-  background-color: #ff9900;
+  background-color: #5DADE2;
   color: white;
 }
 
 .login-button:hover {
-  background-color: #e62e00;
+  background-color: #45A049;
 }
 
 .register-button:hover {
-  background-color: #e68a00;
+  background-color: #3498DB;
 }
 
-/* Estilos generales para el formulario */
-.login-title {
-  font-size: 26px;
-  color: #ff9900; /* Color vibrante */
+.error-message,
+.success-message {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
   font-weight: bold;
+  text-align: left; /* Alineación de mensajes a la izquierda */
 }
 
-.login-subtitle {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 20px;
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
-/* Estilos para los grupos de formulario */
-.form-group {
-  width: 100%;
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  font-size: 14px;
-  color: #444;
-  display: flex;
-  align-items: center;
-}
-
-.form-group .icon {
-  margin-right: 8px;
-  color: #ff9900; /* Color vibrante */
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #ff9900;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-  border-color: #ff3300; /* Cambia el color al hacer foco */
-}
-
-/* Botones */
-.login-button,
-.register-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.login-button {
-  background-color: #ff3300;
-  color: white;
-}
-
-.register-button {
-  background-color: #ff9900;
-  color: white;
-}
-
-.login-button:hover {
-  background-color: #e62e00;
-}
-
-.register-button:hover {
-  background-color: #e68a00;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .login-title {
-    font-size: 24px; /* Ajusta el tamaño de fuente del título */
-  }
-
-  .form-group input {
-    padding: 10px; /* Reduce el padding en los inputs */
-  }
-
-  .login-button,
-  .register-button {
-    padding: 10px; /* Ajusta el padding de los botones */
-  }
-}
-
-@media (max-width: 480px) {
-  .login-title {
-    font-size: 20px; /* Ajusta aún más el tamaño del título */
-  }
-
-  .login-subtitle {
-    font-size: 14px; /* Ajusta el tamaño del subtítulo */
-  }
-
-  .form-group input {
-    padding: 8px; /* Reduce más el padding en inputs */
-  }
-
-  .login-button,
-  .register-button {
-    padding: 8px; /* Reduce más el padding de los botones */
-  }
-}
-/* Asegúrate de que el contenedor principal ocupe toda la altura */
-html, body {
-  height: 100%; /* Asegúrate de que el html y body ocupen toda la altura */
-  margin: 0; /* Elimina márgenes por defecto */
-}
-
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; /* Asegura que el contenido esté centrado verticalmente */
-  padding: 30px;
-  max-width: 400px;
-  width: 90%; /* Cambia a un porcentaje para mayor responsividad */
-  height: auto; /* Permite que la altura sea dinámica */
-  min-height: 400px; /* Asegura un tamaño mínimo en pantallas más pequeñas */
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  color: #333;
-  margin: auto; /* Centra horizontalmente en caso de que haya espacio extra */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
 }
