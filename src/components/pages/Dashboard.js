@@ -1,9 +1,8 @@
-// src/components/Dashboard.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
-function Dashboard() {
+function Dashboard({ userId }) { // Recibe userId como prop
     const [codigo, setCodigo] = useState('');
     const [mensaje, setMensaje] = useState('');
     const [cargando, setCargando] = useState(false);
@@ -26,7 +25,6 @@ function Dashboard() {
             }
 
             setHistorial(data.historial);
-
         } catch (error) {
             console.error("Error al obtener el historial:", error);
             setMensaje(error.message);
@@ -39,7 +37,6 @@ function Dashboard() {
         }
     }, [userId]);
 
-    
     const handleReclamar = async (event) => {
         event.preventDefault(); // Evitar que el formulario se recargue
 
@@ -72,7 +69,6 @@ function Dashboard() {
             setTimeout(() => {
                 navigate('/');
             }, 2000);
-
         } catch (error) {
             console.error("Error:", error);
             setMensaje(error.message);
