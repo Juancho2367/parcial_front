@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
@@ -34,7 +33,7 @@ function Login({callback}) {
                 setSuccess(result.status);
                 callback(result.userId, result.role); // Asegúrate de que el backend devuelva el userId y el role
                 console.log('Login exitoso:', { username, password });
-                navigate('/reclamar-codigo'); // Navega a la ruta deseada después del login
+                navigate('/dashboard'); // Cambia a la ruta que deseas después del login
             } else {
                 setError(result.message); // Cambiado para usar message del resultado
             }
