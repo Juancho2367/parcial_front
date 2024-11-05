@@ -34,7 +34,7 @@ function Login() {
                 setSuccess(result.status);
                 localStorage.setItem('userId', result.userId);
                 localStorage.setItem('role', result.role); // Guardar role si es necesario
-                navigate('/reclamar-codigo');
+                navigate('/dashboard');
             } else {
                 setError(result.message || 'Credenciales incorrectas');
             }
