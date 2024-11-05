@@ -32,7 +32,7 @@ function Login() {
 
             if (response.ok) {
                 setSuccess(result.status);
-                callback(result.userId, result.role); // Asegúrate de que el backend devuelva el userId y el role
+                localStorage.setItem('userId', result.userId); // Guardar el userId en localStorage
                 console.log('Login exitoso:', { username, password });
                 navigate('/dashboard'); // Navega a la ruta deseada después del login
             } else {
