@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import './styles/RegistroAdmin.css'; // Asegúrate de que esta línea esté correcta
-import { useNavigate } from 'react-router-dom'; // Para redirigir
+import '../styles/RegistroAdmin.css';
+import { useNavigate } from 'react-router-dom';
 
 const NewAdmin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [mensaje, setMensaje] = useState('');
-    const navigate = useNavigate(); // Para la redirección
+    const navigate = useNavigate();
 
     const handleRegister = async (event) => {
-        event.preventDefault(); // Evitar el recargo de la página
+        event.preventDefault();
 
         const datos = { username, password };
 
-        try {
-            const response = await fetch('http://localhost:4000/api/users/registroAD', {
+    try {
+        const response = await fetch('http://localhost:4000/api/users/registroAD', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,15 +22,19 @@ const NewAdmin = () => {
                 body: JSON.stringify(datos),
             });
 
-            const data = await response.json();
-
             if (!response.ok) {
-                throw new Error(data.message || '❌ Error en el registro, intenta de nuevo ❌');
+                // Capturamos el cuerpo de la respuesta en caso de error
+                const errorData = await response.json();
+                throw new Error(errorData.message || '❌ Error en el registro, intenta de nuevo ❌');
             }
 
-            setMensaje(data.message);
+            // Si la respuesta es correcta, procesamos el JSON
+            const data = await response.json();
+            setMensaje(data.message || '✔️ Administrador registrado con éxito');
+            
+            // Redirigir después de un corto retraso para mostrar el mensaje de éxito
             setTimeout(() => {
-                navigate('/admin'); // Redirige al área de administración después de registrar
+                navigate('/loginAD');
             }, 2000);
 
         } catch (error) {
@@ -66,7 +70,7 @@ const NewAdmin = () => {
                     />
                 </div>
                 <button className="register-button" type="submit">Registrar Administrador</button>
-                <button className="back-button" type="button" onClick={() => navigate('/admin')}>Regresar al Login</button>
+                <button className="back-button" type="button" onClick={() => navigate('/loginAD')}>Regresar al Login</button>
                 {mensaje && (
                     <p className={mensaje.includes('Éxito') ? 'mensaje-exito' : 'mensaje-error'}>
                         {mensaje}

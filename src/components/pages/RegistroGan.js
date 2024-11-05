@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
-import './styles/Ganadores.css';
+import '../styles/RegistroGan.css';
 
 const Ganadores = () => {
     const [ganadores, setGanadores] = useState([]);
@@ -10,7 +10,7 @@ const Ganadores = () => {
 
     const obtenerGanadores = async () => {
         try {
-            const response = await fetch('https://back-margarita.vercel.app/v1/margarita/ganadores', {
+            const response = await fetch('http://localhost:4000/api/users/registroGan', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const Ganadores = () => {
 
     return (
         <div className="ganadores-container">
-            <h2>🏆 Ganadores de Premios 🏆</h2>
+            <h2> Ganadores de Premios </h2>
             {cargando ? (
                 <div className="loader">🔄 Cargando...</div>
             ) : (

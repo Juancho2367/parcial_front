@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './styles/LoginAdmin.css';
+import '../styles/LoginAdmin.css';
 
-const LoginAdmin = ({ callback }) => { // Añadir callback aquí
+const LoginAdmin = () => { // Quitar callback de los props
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [mensaje, setMensaje] = useState('');
@@ -30,9 +30,8 @@ const LoginAdmin = ({ callback }) => { // Añadir callback aquí
 
             if (data.status === "Bienvenido") {
                 setMensaje(data.status);
-                callback(data.userId); // Llamar a la función callback con el userId
                 setTimeout(() => {
-                    navigate('/ganadores'); // Redirigir a la ruta de ganadores
+                    navigate('/RegistroGan'); // Redirigir a la ruta de ganadores
                 }, 2000);
             }
         } catch (error) {
@@ -42,7 +41,7 @@ const LoginAdmin = ({ callback }) => { // Añadir callback aquí
     };
 
     const handleRegister = () => {
-        navigate('/newadmin');
+        navigate('/RegistroAD');
     };
 
     return (

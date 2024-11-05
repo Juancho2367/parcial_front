@@ -2,7 +2,7 @@
 
 .ganadores-container {
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #000000;
     border-radius: 8px;
 }
 
@@ -14,11 +14,11 @@ table {
 th, td {
     padding: 10px;
     text-align: left;
-    border: 1px solid #ddd;
+    border: 1px solid #000000;
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #000000;
 }
 
 .loader {
