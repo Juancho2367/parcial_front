@@ -24,7 +24,7 @@ function App() {
         <Route path="/RegistroAD" element={<RegistroAdmin />} />
         <Route path="/RegistroGan" element={<RegistroGan />} />
         <Route path='/dashboard' 
-          element={userId ? <Dashboard userId={userId} /> : <Navigate to="/" replace />} 
+          element={userId ? <dashboard userId={userId} /> : <Navigate to="/" replace />} 
         />
       </Routes>
     </Router>
