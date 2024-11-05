@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
-function Login({ callback }) {
+function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -32,19 +32,23 @@ function Login({ callback }) {
 
             if (response.ok) {
                 setSuccess(result.status);
-                // Guarda el userId y el role en el local storage
                 localStorage.setItem('userId', result.userId);
-                localStorage.setItem('role', result.role);
-                console.log('Login exitoso:', { username, password });
-                navigate('/Dashboard');
+                localStorage.setItem('role', result.role); // Guardar role si es necesario
+                navigate('/reclamar-codigo');
             } else {
-                setError(result.message);
+                setError(result.message || 'Credenciales incorrectas');
             }
         } catch (error) {
             console.error('Error al realizar la solicitud:', error);
             setError('Error al intentar iniciar sesión. Intente de nuevo más tarde.');
         }
     };
+    useEffect(() => {
+        // Guarda el userId en localStorage cuando está disponible y solo en el cliente
+        if (userId && typeof window !== 'undefined') {
+            localStorage.setItem('userId', userId);
+        }
+    }, [userId]);
 
     return (
         <div className="login-container">

@@ -1,3 +1,4 @@
+// src/components/Dashboard.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
@@ -22,8 +23,11 @@ function Dashboard() {
                     }
                 })
                 .catch(() => setMensaje('Error al cargar el historial.'));
+        } else {
+            setMensaje('No has iniciado sesión');
+            navigate('/login');
         }
-    }, []);
+    }, [navigate]);
 
     const handleReclamar = async (e) => {
         e.preventDefault();
@@ -34,8 +38,8 @@ function Dashboard() {
             return;
         }
 
-        if (!codigo.trim()) { // Verificar si el código está vacío
-            setMensaje('❌ Inserte un código ❌');
+        if (!codigo.trim()) {
+            setMensaje('❌ Inserta un código ❌');
             return;
         }
 
@@ -55,15 +59,13 @@ function Dashboard() {
             if (response.ok) {
                 setMensaje(result.message);
                 setCodigo('');
-                setHistorial((prevHistorial) => [
-                    ...prevHistorial,
-                    { codigo, montoGanado: result.montoGanado, estado: 'Reclamado', fechaReclamo: new Date() }
-                ]);
+                setHistorial([...historial, { codigo, montoGanado: result.monto, estado: 'reclamado', fecha: new Date().toLocaleString() }]);
             } else {
-                setMensaje(result.message);
+                setMensaje(result.message || 'Error en el reclamo, intenta de nuevo');
             }
-        } catch {
-            setMensaje('Error al reclamar el código. Intenta de nuevo más tarde.');
+        } catch (error) {
+            console.error("Error:", error);
+            setMensaje('Error en el servidor');
         } finally {
             setCargando(false);
         }
@@ -102,7 +104,7 @@ function Dashboard() {
                     <ul>
                         {historial.map((reclamo, index) => (
                             <li key={index}>
-                                Código: {reclamo.codigo}, Monto: ${reclamo.montoGanado}, Estado: {reclamo.estado}, Fecha: {new Date(reclamo.fechaReclamo).toLocaleString('es-CO')}
+                                Código: {reclamo.codigo}, Monto: ${reclamo.montoGanado}, Estado: {reclamo.estado}, Fecha: {reclamo.fecha}
                             </li>
                         ))}
                     </ul>
