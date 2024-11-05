@@ -11,7 +11,7 @@ function App() {
 
   const handleLogin = (userId) => {
         console.log("Usuario logueado con ID:", userId); // Esto debería mostrar el ID
-        setUserId(userid);
+        setUserId(userId);
     };
   return (
     <BrowserRouter>
