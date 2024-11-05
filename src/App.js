@@ -9,9 +9,9 @@ import RegistroGan from './components/pages/RegistroGan';
 function App() {
   const [userId, setUserId] = useState(null);
 
-    const handleLogin = (userId) => {
+  const handleLogin = (userId) => {
         console.log("Usuario logueado con ID:", userId); // Esto debería mostrar el ID
-        setUserId(userId);
+        setUserId(userid);
     };
   return (
     <BrowserRouter>

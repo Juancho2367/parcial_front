@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
-function Login() {
+function Login(callback) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -43,7 +43,7 @@ function Login() {
             setError('Error al intentar iniciar sesión. Intente de nuevo más tarde.');
         }
     };
-    
+
     return (
         <div className="login-container">
             <h2 className="login-title">Gana Con Detodito</h2>

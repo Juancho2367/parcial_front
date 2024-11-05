@@ -40,7 +40,7 @@ function Dashboard() {
     }, [userId]);
 
     
-    const handleReclamar = async (event) => {
+    const handleReclamar = async ({userId}) => {
         event.preventDefault(); // Evitar que el formulario se recargue
 
         if (!userId) {
