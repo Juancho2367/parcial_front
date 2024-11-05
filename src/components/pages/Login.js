@@ -30,6 +30,8 @@ function Login() {
 
             const result = await response.json();
 
+            console.log('Login response:', result); // Agregado para verificar la respuesta
+
             if (response.ok) {
                 setSuccess(result.status);
                 localStorage.setItem('userId', result.userId); // Guardar el userId en localStorage

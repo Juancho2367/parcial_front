@@ -35,6 +35,8 @@ function Dashboard() {
 
     useEffect(() => {
         const userId = localStorage.getItem('userId'); // Recuperar el userId de localStorage
+        console.log('User ID desde localStorage:', userId); // Agregado para verificar el userId
+
         if (userId) {
             obtenerHistorial(userId);
         } else {
