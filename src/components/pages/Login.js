@@ -43,12 +43,6 @@ function Login() {
             setError('Error al intentar iniciar sesión. Intente de nuevo más tarde.');
         }
     };
-    useEffect(() => {
-        // Guarda el userId en localStorage cuando está disponible y solo en el cliente
-        if (userId && typeof window !== 'undefined') {
-            localStorage.setItem('userId', userId);
-        }
-    }, [userId]);
 
     return (
         <div className="login-container">
