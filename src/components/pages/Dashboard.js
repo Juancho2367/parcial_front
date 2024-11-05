@@ -10,40 +10,45 @@ function Dashboard() {
     const [historial, setHistorial] = useState([]);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-            fetch(`https://parcial-back-two.vercel.app/api/users/${userId}/history`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "Éxito") {
-                        setHistorial(data.historial);
-                    } else {
-                        setMensaje(data.message);
-                    }
-                })
-                .catch(() => setMensaje('Error al cargar el historial.'));
-        } else {
-            setMensaje('No has iniciado sesión');
-            navigate('/login');
-        }
-    }, [navigate]);
+    const obtenerHistorial = async (userId) => {
+        try {
+            const response = await fetch(`https://parcial-back-two.vercel.app/api/users/${userId}/history`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-    const handleReclamar = async (e) => {
-        e.preventDefault();
-        const userId = localStorage.getItem('userId');
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || '❌ Error al obtener el historial ❌');
+            }
+
+            setHistorial(data.historial);
+
+        } catch (error) {
+            console.error("Error al obtener el historial:", error);
+            setMensaje(error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (userId) {
+            obtenerHistorial(userId);
+        }
+    }, [userId]);
+
+    const handleReclamar = async (event) => {
+        event.preventDefault(); // Evitar que el formulario se recargue
 
         if (!userId) {
-            setMensaje('❌ Debes estar autenticado para reclamar el código ❌');
+            setMensaje("❌ Debes estar autenticado para reclamar el código ❌");
             return;
         }
 
-        if (!codigo.trim()) {
-            setMensaje('❌ Inserta un código ❌');
-            return;
-        }
-
-        setCargando(true);
+        const datos = { userId, codigo };
+        setCargando(true); // Mostrar indicador de carga
 
         try {
             const response = await fetch('https://parcial-back-two.vercel.app/api/users/ingresar-codigo', {
@@ -51,23 +56,27 @@ function Dashboard() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ codigo, userId }),
+                body: JSON.stringify(datos),
             });
 
-            const result = await response.json();
+            const data = await response.json();
 
-            if (response.ok) {
-                setMensaje(result.message);
-                setCodigo('');
-                setHistorial([...historial, { codigo, montoGanado: result.monto, estado: 'reclamado', fecha: new Date().toLocaleString() }]);
-            } else {
-                setMensaje(result.message || 'Error en el reclamo, intenta de nuevo');
+            if (!response.ok) {
+                throw new Error(data.message || '❌ Error en el reclamo, intenta de nuevo ❌');
             }
+
+            setMensaje(data.message);
+            setCodigo(''); // Limpiar el campo del código tras un reclamo exitoso
+            await obtenerHistorial(userId);
+            setTimeout(() => {
+                navigate('/');
+            }, 2000);
+
         } catch (error) {
             console.error("Error:", error);
-            setMensaje('Error en el servidor');
+            setMensaje(error.message);
         } finally {
-            setCargando(false);
+            setCargando(false); // Ocultar indicador de carga
         }
     };
 

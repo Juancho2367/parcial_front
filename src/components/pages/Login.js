@@ -15,7 +15,7 @@ function Login() {
         setSuccess('');
 
         const loginData = {
-            email: username,
+            email: username, // Asegúrate de que el "username" se use como correo
             password,
         };
 
@@ -32,11 +32,11 @@ function Login() {
 
             if (response.ok) {
                 setSuccess(result.status);
-                localStorage.setItem('userId', result.userId);
-                localStorage.setItem('role', result.role); // Guardar role si es necesario
-                navigate('/dashboard');
+                callback(result.userId, result.role); // Asegúrate de que el backend devuelva el userId y el role
+                console.log('Login exitoso:', { username, password });
+                navigate('/dashboard'); // Navega a la ruta deseada después del login
             } else {
-                setError(result.message || 'Credenciales incorrectas');
+                setError(result.message); // Cambiado para usar message del resultado
             }
         } catch (error) {
             console.error('Error al realizar la solicitud:', error);
