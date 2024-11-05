@@ -7,17 +7,26 @@ import RegistroAdmin from './components/pages/RegistroAdmin';
 import RegistroGan from './components/pages/RegistroGan';
 
 function App() {
+  const [userId, setUserId] = useState(null);
+
+    const handleLogin = (userId) => {
+        console.log("Usuario logueado con ID:", userId); // Esto debería mostrar el ID
+        setUserId(userId);
+    };
   return (
+    <BrowserRouter>
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route index element={<Login callback={handleLogin} />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/LoginAD" element={<LoginAdmin />} />
         <Route path="/RegistroAD" element={<RegistroAdmin />} />
         <Route path="/RegistroGan" element={<RegistroGan />} />
+          path='/dashboard' 
+          element={userId ? <Dashboard userId={userId} /> : <Navigate to="/" replace />} 
       </Routes>
     </Router>
+    </BrowserRouter>
   );
 }
 

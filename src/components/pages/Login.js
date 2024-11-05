@@ -30,13 +30,11 @@ function Login() {
 
             const result = await response.json();
 
-            console.log('Login response:', result); // Agregado para verificar la respuesta
-
             if (response.ok) {
                 setSuccess(result.status);
-                localStorage.setItem('userId', result.userId); // Guardar el userId en localStorage
+                callback(result.userId, result.role); // Asegúrate de que el backend devuelva el userId y el role
                 console.log('Login exitoso:', { username, password });
-                navigate('/dashboard'); // Navega a la ruta deseada después del login
+                navigate('/reclamar-codigo'); // Navega a la ruta deseada después del login
             } else {
                 setError(result.message); // Cambiado para usar message del resultado
             }
@@ -45,7 +43,7 @@ function Login() {
             setError('Error al intentar iniciar sesión. Intente de nuevo más tarde.');
         }
     };
-
+    
     return (
         <div className="login-container">
             <h2 className="login-title">Gana Con Detodito</h2>

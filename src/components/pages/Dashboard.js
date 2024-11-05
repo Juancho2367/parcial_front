@@ -34,20 +34,14 @@ function Dashboard() {
     };
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId'); // Recuperar el userId de localStorage
-        console.log('User ID desde localStorage:', userId); // Agregado para verificar el userId
-
         if (userId) {
             obtenerHistorial(userId);
-        } else {
-            setMensaje('❌ No has iniciado sesión ❌');
-            navigate('/login');
         }
-    }, [navigate]);
+    }, [userId]);
 
+    
     const handleReclamar = async (event) => {
         event.preventDefault(); // Evitar que el formulario se recargue
-        const userId = localStorage.getItem('userId'); // Recuperar el userId nuevamente
 
         if (!userId) {
             setMensaje("❌ Debes estar autenticado para reclamar el código ❌");
@@ -76,7 +70,7 @@ function Dashboard() {
             setCodigo(''); // Limpiar el campo del código tras un reclamo exitoso
             await obtenerHistorial(userId);
             setTimeout(() => {
-                navigate('/'); // Navegar a la ruta deseada
+                navigate('/');
             }, 2000);
 
         } catch (error) {
