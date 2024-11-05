@@ -10,7 +10,7 @@ const Ganadores = () => {
 
     const obtenerGanadores = async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/users/registroGan', {
+            const response = await fetch('https://parcial-back-two.vercel.app/api/users/registroGan', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

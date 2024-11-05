@@ -12,7 +12,7 @@ function Dashboard() {
     useEffect(() => {
         const userId = localStorage.getItem('userId');
         if (userId) {
-            fetch(`http://localhost:4000/api/users/${userId}/history`)
+            fetch(`https://parcial-back-two.vercel.app/api/users/${userId}/history`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.status === "Éxito") {
@@ -42,7 +42,7 @@ function Dashboard() {
         setCargando(true);
 
         try {
-            const response = await fetch('http://localhost:4000/api/users/ingresar-codigo', {
+            const response = await fetch('https://parcial-back-two.vercel.app/api/users/ingresar-codigo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

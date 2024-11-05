@@ -34,7 +34,7 @@ function Register() {
         throw new Error("Correo no es válido");
       }
 
-      const response = await fetch('http://localhost:4000/api/users/register', {
+      const response = await fetch('https://parcial-back-two.vercel.app/api/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -14,7 +14,7 @@ const LoginAdmin = () => { // Quitar callback de los props
         const datos = { username, password };
 
         try {
-            const response = await fetch('http://localhost:4000/api/users/loginAD', {
+            const response = await fetch('https://parcial-back-two.vercel.app/api/users/loginAD', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
