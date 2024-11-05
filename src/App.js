@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; // Asegúrate de importar useState
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'; // Asegúrate de importar Navigate
+import { BrowserRouter as Router, Route, Routes, Navigate, BrowserRouter } from 'react-router-dom'; // Asegúrate de importar Navigate
 import Register from './components/pages/Register';
 import Login from './components/pages/Login';
 import Dashboard from './components/pages/Dashboard';
