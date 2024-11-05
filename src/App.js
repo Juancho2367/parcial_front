@@ -11,25 +11,25 @@ function App() {
   const [userId, setUserId] = useState(null);
 
   const handleLogin = (userId) => {
-    console.log("Usuario logueado con ID:", userId);
-    setUserId(userId);
-  };
+        console.log("Usuario logueado con ID:", userId); // Esto debería mostrar el ID
+        setUserId(userId);
+    };
 
   return (
-    <Router>
-      <Routes>
-        <Route index element={<Login callback={handleLogin} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/LoginAD" element={<LoginAdmin />} />
-        <Route path="/RegistroAD" element={<RegistroAdmin />} />
-        <Route path="/RegistroGan" element={<RegistroGan />} />
-        <Route 
-          path='/dashboard' 
-          element={userId ? <Dashboard userId={userId} /> : <Navigate to="/" replace />} 
-        />
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <Router>
+        <Routes>
+          <Route index element={<Login callback={handleLogin} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/LoginAD" element={<LoginAdmin />} />
+          <Route path="/RegistroAD" element={<RegistroAdmin />} />
+          <Route path="/RegistroGan" element={<RegistroGan />} />
+          <Route path='/dashboard' 
+            element={userId ? <Dashboard userId={userId} /> : <Navigate to="/" replace />} 
+          />
+        </Routes>
+      </Router>
+    </BrowserRouter>
   );
 }
-
 export default App;
